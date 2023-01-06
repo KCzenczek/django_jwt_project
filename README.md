@@ -1,0 +1,1 @@
+A Django project that uses a JWT as a token to authenticate the execution of an endpoint.
