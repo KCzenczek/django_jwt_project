@@ -1,0 +1,51 @@
+{% extends "django_jwt/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/main_page.css' %}">
+{% endblock %}
+
+{% block page_content %}
+  <div class="container">
+    <div class="hello_text">
+      Hello {{ user.username|default:'you...' }}
+    </div>
+    {% if user.is_authenticated %}
+      <div class="hello_text_2">
+        good to see you :) do not forget to <a href="{% url 'f_logout' %}">Logout</a>
+      </div>
+    {% else %}
+      <div class="hello_text_2">
+        be so kind and <a href="{% url 'f_login' %}">Login</a>
+      </div>
+    {% endif %}
+
+    <div class="option_text">
+      Options for you are following:
+    </div>
+    <nav class="navbar navbar-expand-sm bg-light">
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <div type="button" class="btn btn-outline-secondary">
+  {#          <a href="{% url 'swagger_ui' %}"  role="button" target="_blank">API Documentation</a>#}
+            <a href="{% url 'admin:index' %}"  role="button" target="_blank">API Documentation</a>
+          </div>
+        </li>
+          {% if user.is_superuser %}
+          <li class="nav-item">
+            <div type="button" class="btn btn-outline-secondary">
+              <a href="{% url 'admin:index' %}" role="button" target="_blank">Admin System</a>
+            </div>
+          </li>
+          {% endif %}
+        {% endif %}
+        <li class="nav-item">
+          <div type="button" class="btn btn-outline-secondary">
+            <a href="{% url 'admin:index' %}"  role="button" target="_blank">Generate token</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+{% endblock %}
