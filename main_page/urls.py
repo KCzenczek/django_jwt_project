@@ -7,5 +7,6 @@ urlpatterns = [
     path("login", views.f_login, name="f_login"),
     path("logout", views.f_logout, name="f_logout"),
     path("api/", include("api.urls")),
+    path("token", views.token_generation, name="token_generation")
 
 ]
