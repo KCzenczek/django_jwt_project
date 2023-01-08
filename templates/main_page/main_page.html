@@ -20,16 +20,20 @@
       </div>
     {% endif %}
 
+    {% if user.is_authenticated %}
     <div class="option_text">
       Options for you are following:
     </div>
     <nav class="navbar navbar-expand-sm bg-light">
       <ul class="navbar-nav">
-        {% if user.is_authenticated %}
         <li class="nav-item">
           <div type="button" class="btn btn-outline-secondary">
-  {#          <a href="{% url 'swagger_ui' %}"  role="button" target="_blank">API Documentation</a>#}
-            <a href="{% url 'admin:index' %}"  role="button" target="_blank">API Documentation</a>
+            <a href="{% url 'swagger_ui' %}"  role="button" target="_blank">API Documentation</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <div type="button" class="btn btn-outline-secondary">
+            <a href="{% url 'admin:index' %}"  role="button" target="_blank">Generate token</a>
           </div>
         </li>
           {% if user.is_superuser %}
@@ -39,13 +43,8 @@
             </div>
           </li>
           {% endif %}
-        {% endif %}
-        <li class="nav-item">
-          <div type="button" class="btn btn-outline-secondary">
-            <a href="{% url 'admin:index' %}"  role="button" target="_blank">Generate token</a>
-          </div>
-        </li>
       </ul>
     </nav>
+    {% endif %}
   </div>
 {% endblock %}

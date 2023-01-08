@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # third parties
+    'drf_spectacular',
+    # apps
     'api',
     'main_page',
 ]
@@ -80,6 +83,38 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# SWAGGER
+SPECTACULAR_SETTINGS = {
+    "TITLE": "API Documentation of the best DC Comics page ever",
+    "DESCRIPTION": "You need JWT to authenticate yourself",
+    "VERSION": "0.0.0",
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": False,
+        "displayOperationId": True,
+        "displayRequestDuration": True,
+        "syntaxHighlight.activate": True,
+        "syntaxHighlight.theme": "monokai",
+        "defaultModelsExpandDepth": -1,
+        "docExpansion": "none",
+    },
+    "SWAGGER_UI_DIST": "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest",
+    "SWAGGER_UI_FAVICON_HREF": "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",  # noqa: E501
+    "DISABLE_ERRORS_AND_WARNINGS": False,
+    "SORT_OPERATIONS": True,
+    # "SECURITY": [
+    #     {
+    #         "basicAuth": [],
+    #     }
+    # ],
+    # "AUTHENTICATION_WHITELIST": ["rest_framework.authentication.BasicAuthentication"],
+}
+
 
 LOGIN_REDIRECT_URL = "main_page"
 LOGOUT_REDIRECT_URL = "main_page"
