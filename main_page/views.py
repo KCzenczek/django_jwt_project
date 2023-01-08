@@ -1,6 +1,10 @@
+import jwt
+from datetime import datetime, timedelta
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -44,3 +48,17 @@ def f_login(request):
 def f_logout(request):
     logout(request)
     return redirect("/dc")
+
+
+@login_required
+def token_generation(request):
+    username = request.user.username
+
+    token_jwt = jwt.encode(
+        {
+            "username": username,
+            "exp": datetime.utcnow() + timedelta(seconds=30),
+            "iat": datetime.utcnow()
+        }, "access_secret", algorithm='HS256'
+    )
+    return render(request, 'main_page/token_generation.html', context={"token": token_jwt})
