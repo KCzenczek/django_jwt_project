@@ -25,9 +25,13 @@
   </div>
 
   <form method="post" enctype="multipart/form-data">
-    <div class="container">
+    <div class="container-fluid-md p-3 my-4 bg-info text-white">
       {% csrf_token %}
       {{ token }}
     </div>
+{#    <div class="container">#}
+{#      {% csrf_token %}#}
+{#      <bold>token_decoded:</bold> {{ token_decoded }}#}
+{#    </div>#}
   </form>
 {% endblock %}

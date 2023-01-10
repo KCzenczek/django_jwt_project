@@ -129,6 +129,9 @@ ENV/
 env.bak/
 venv.bak/
 
+#Public and private key files
+private_key
+public_key.pub
 # Spyder project settings
 .spyderproject
 .spyproject
