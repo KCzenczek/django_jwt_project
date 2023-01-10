@@ -1,5 +1,7 @@
+import datetime as dt
 import jwt
-from datetime import datetime, timedelta
+import time
+from cryptography.hazmat.primitives import serialization
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -53,12 +55,56 @@ def f_logout(request):
 @login_required
 def token_generation(request):
     username = request.user.username
+    payload_data = {
+        "username": username,
+        "exp": dt.datetime.utcnow() + dt.timedelta(seconds=60),
+        "iat": dt.datetime.utcnow()
+    }
 
-    token_jwt = jwt.encode(
-        {
-            "username": username,
-            "exp": datetime.utcnow() + timedelta(seconds=30),
-            "iat": datetime.utcnow()
-        }, "access_secret", algorithm='HS256'
+    # private key
+    private_key_file = open('private_key', 'r').read()
+    private_key = serialization.load_ssh_private_key(private_key_file.encode(), password=b'')
+
+    # token creation
+    new_token = jwt.encode(
+        payload=payload_data,
+        key=private_key,
+        algorithm='RS256'
     )
-    return render(request, 'main_page/token_generation.html', context={"token": token_jwt})
+
+    # public key and decoding for testing below only
+    public_key_file = open('public_key.pub', 'r').read()
+    public_key = serialization.load_ssh_public_key(public_key_file.encode())
+
+    token_decoded = jwt.decode(jwt=new_token, key=public_key, algorithms=['RS256', ])
+    print("Encoded date: ", token_decoded["exp"], "Decoded date: ", dt.date.fromtimestamp(token_decoded["exp"]))
+
+    # time.sleep(30)
+    try:
+        token_decoded_after_30_sec = jwt.decode(jwt=new_token, key=public_key, algorithms=['RS256', ])
+    except jwt.ExpiredSignatureError:
+        token_decoded_after_30_sec = ""
+        print("Token has expired!")
+
+    if token_decoded_after_30_sec:
+        print("Token is valid!")
+
+    # as alternative: jwt with algorythm HS256 and secret_key only
+
+    # secret_key = "super long, super random and super secret"
+    # new_token = jwt.encode(
+    #     {
+    #         "username": username,
+    #         "exp": dt.datetime.utcnow() + dt.timedelta(days=2),
+    #         "iat": dt.datetime.utcnow()
+    #     },
+    #     secret_key,
+    #     algorithm='HS256'
+    # )
+
+    return render(
+        request, 'main_page/token_generation.html', context={
+            "token": new_token,
+            # "token_decoded": token_decoded
+        }
+    )
