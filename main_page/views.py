@@ -54,10 +54,14 @@ def f_logout(request):
 
 @login_required
 def token_generation(request):
+    # to generate pair of public private key:
+    # using ssh-keygen: $ ssh-keygen -t rsa --> id_rsa and id_rsa.pub in directory .ssh
+
     username = request.user.username
     payload_data = {
         "username": username,
-        "exp": dt.datetime.utcnow() + dt.timedelta(seconds=60),
+        "id": 'sds',
+        "exp": dt.datetime.utcnow() + dt.timedelta(days=15),
         "iat": dt.datetime.utcnow()
     }
 
@@ -73,24 +77,18 @@ def token_generation(request):
     )
 
     # public key and decoding for testing below only
-    public_key_file = open('public_key.pub', 'r').read()
-    public_key = serialization.load_ssh_public_key(public_key_file.encode())
-
-    token_decoded = jwt.decode(jwt=new_token, key=public_key, algorithms=['RS256', ])
-    print("Encoded date: ", token_decoded["exp"], "Decoded date: ", dt.date.fromtimestamp(token_decoded["exp"]))
-
-    # time.sleep(30)
-    try:
-        token_decoded_after_30_sec = jwt.decode(jwt=new_token, key=public_key, algorithms=['RS256', ])
-    except jwt.ExpiredSignatureError:
-        token_decoded_after_30_sec = ""
-        print("Token has expired!")
-
-    if token_decoded_after_30_sec:
-        print("Token is valid!")
+    # public_key_file = open('public_key.pub', 'r').read()
+    # public_key = serialization.load_ssh_public_key(public_key_file.encode())
+    #
+    # token_decoded = jwt.decode(jwt=new_token, key=public_key, algorithms=['RS256', ])
+    #
+    # try:
+    #     token_decoded = jwt.decode(jwt=new_token, key=public_key, algorithms=['RS256', ])
+    #     print("Token is valid!")
+    # except jwt.ExpiredSignatureError:
+    #     print("Token has expired!")
 
     # as alternative: jwt with algorythm HS256 and secret_key only
-
     # secret_key = "super long, super random and super secret"
     # new_token = jwt.encode(
     #     {
@@ -105,6 +103,5 @@ def token_generation(request):
     return render(
         request, 'main_page/token_generation.html', context={
             "token": new_token,
-            # "token_decoded": token_decoded
         }
     )
